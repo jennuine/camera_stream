@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(camera_stream)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+add_compile_options(-std=c++11)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -18,6 +18,9 @@ find_package(catkin REQUIRED COMPONENTS
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 find_package(OpenCV REQUIRED)
+
+# MESSAGE("*********OpenCV include dirs: ${OpenCV_INCLUDE_DIRS}")
+# MESSAGE("*********OpenCV libraries: ${OpenCV_LIBRARIES}")
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -105,9 +108,9 @@ find_package(OpenCV REQUIRED)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES camera_stream
-  CATKIN_DEPENDS cv_bridge image_transport roscpp sensor_msgs std_msgs
+  # INCLUDE_DIRS include
+  LIBRARIES aruco
+  CATKIN_DEPENDS cv_bridge image_transport roscpp sensor_msgs std_msgs aruco_ros
 #  DEPENDS system_lib
 )
 
@@ -120,7 +123,8 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
-  ${OpenCV_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS} # ROS's OpenCV
+  /usr/local/include/opencv2 # Core OpenCV
 )
 
 ## Declare a C++ library
@@ -142,7 +146,8 @@ ${catkin_EXPORTED_TARGETS})
 target_link_libraries(camera_sender_node
    ${catkin_LIBRARIES}
    ${OpenCV_LIBRARIES}
-   ${OpenCV_LIBS}
+   ${OpenCV_LIBS} # ROS'S OpenCV
+   /usr/local/lib # Core OpenCV
 )
 
 add_executable(camera_receiver_node src/camera_receiver_node.cpp)
