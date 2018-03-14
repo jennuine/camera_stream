@@ -11,7 +11,33 @@ int main(int argc, char** argv)
   ros::NodeHandle nh;
   image_transport::ImageTransport it(nh);
 
-  cv::VideoCapture capture(0);
+  int device_num, image_width, image_height, loop_rate;
+
+  if (!nh.getParam("/usb_cam/video_device_num", device_num))
+  {
+    ROS_ERROR("Error retrieving parameter video_device_num");
+    device_num = 0;
+  }
+
+  if (!nh.getParam("/usb_cam/image_width", image_width))
+  {
+    ROS_ERROR("Error retrieving parameter image_width");
+    image_width = 640;
+  }
+
+  if (!nh.getParam("/usb_cam/image_height", image_height))
+  {
+    ROS_ERROR("Error retrieving parameter image_height");
+    image_height = 480;
+  }
+
+  if (!nh.getParam("/usb_cam/loop_rate", loop_rate))
+  {
+    ROS_ERROR("Error retrieving parameter loop_rate");
+    loop_rate = 60;
+  }
+
+  cv::VideoCapture capture(device_num);
 
   if (!capture.isOpened())
   {
@@ -19,12 +45,13 @@ int main(int argc, char** argv)
     return 1;
   }
 
-  image_transport::Publisher publisher = it.advertise("camera/image", 480*640);
+  int queue_size = image_width*image_height;
+  image_transport::Publisher publisher = it.advertise("/camera/image_raw", queue_size);
 
   cv::Mat frame;
   sensor_msgs::ImagePtr msg;
 
-  ros::Rate loop_rate(10);
+  ros::Rate rate(loop_rate);
   while(nh.ok())
   {
     capture >> frame;
@@ -36,6 +63,6 @@ int main(int argc, char** argv)
       cv::waitKey(1);
     }
     ros::spinOnce();
-    loop_rate.sleep();
+    rate.sleep();
   }
 }
