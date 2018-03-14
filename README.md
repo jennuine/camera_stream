@@ -5,7 +5,7 @@ ROS camera stream package
 
 ```
 roslaunch camera_stream camera_stream_publisher.launch
-rosrun camera_calibration cameracalibrator.py --size 8x6 --square 25.4 image:=/usb_cam/image_raw camera:=/usb_cam
+rosrun camera_calibration cameracalibrator.py --size 8x6 --square 0.254 image:=/usb_cam/image_raw camera:=/usb_cam
 ```
 
 Refer to [ROS Monocular Camera Calibration Tutorial](http://wiki.ros.org/camera_calibration/Tutorials/MonocularCalibration) for more information.
